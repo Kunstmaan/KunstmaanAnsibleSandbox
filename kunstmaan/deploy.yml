@@ -100,11 +100,9 @@
     - name: remove cache dir
       action: command rm -rf {{web_path}}/{{app_name}}/app/cache
 
-    - name: ensure log directory
-      action: file dest={{web_path}}/{{app_name}}/app/logs state=directory mode=0755 owner=www-data group=www-data
+    - name: ensure www-data
+      action: file dest={{web_path}}/{{app_name}} state=directory mode=0755 owner=www-data group=www-data recurse=yes
 
-    - name: ensure cache directory
-      action: file dest={{web_path}/{{app_name}}/app/cache state=directory mode=0755 owner=www-data group=www-data
 
   handlers:
     - name: restart nginx
