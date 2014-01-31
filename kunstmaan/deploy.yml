@@ -26,6 +26,7 @@
 
     - name: drop database
       action: command /usr/bin/php app/console doctrine:database:drop --force --no-interaction chdir={{web_path}}/{{app_name}}
+      ignore_errors: yes
 
     - name: create database
       action: command /usr/bin/php app/console doctrine:database:create --no-interaction chdir={{web_path}}/{{app_name}}
