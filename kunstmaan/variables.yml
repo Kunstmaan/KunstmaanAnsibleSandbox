@@ -1,0 +1,19 @@
+---
+# Application Specific variables
+app_name: kunstmaan-bundles-standard-edition
+app_database: kunstmaan
+app_database_user: root
+app_database_userpwd: veryunsafepassword123
+
+web_path: /var/www
+
+# Repository
+repo_url: https://github.com/Kunstmaan/KunstmaanBundlesStandardEdition.git
+repo_remote: origin
+repo_version: master
+
+# Kind of it can be automated?
+mysql_root_password: veryunsafepassword123
+
+# Symfony 2 secret key
+app_secret_key: ThisTokenIsNotSoSecretChangeIt

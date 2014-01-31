@@ -1,0 +1,110 @@
+---
+
+- hosts: webserver
+  user: vagrant
+  sudo: True
+
+  vars_files:
+    - variables.yml
+
+
+  tasks:
+    - name: clone KunstmaanBundlesStandardEdition
+      action: git repo={{repo_url}} dest={{web_path}}/{{app_name}} remote={{repo_remote}} version={{repo_version}}
+
+    - name: copy symfony config
+      template: src=templates/symfony/parameters.yml dest={{web_path}}/{{app_name}}/app/config/parameters.yml mode=0644 owner=root group=root
+
+    - name: copy app_dev.php
+      template: src=templates/symfony/app_dev.php dest={{web_path}}/{{app_name}}/web/app_dev.php mode=0644 owner=www-data group=www-data
+
+    - name: composer install
+      action: command /usr/bin/composer --prefer-source --no-interaction install chdir={{web_path}}/{{app_name}}
+
+    - name: create demo bundle
+      action: command /usr/bin/php app/console kuma:generate:bundle --namespace=Sandbox/WebsiteBundle --dir=src/ --no-interaction chdir={{web_path}}/{{app_name}} --bundle-name=SandboxWebsiteBundle creates={{web_path}}/{{app_name}}/src/Sandbox/WebsiteBundle
+
+    - name: drop database
+      action: command /usr/bin/php app/console doctrine:database:drop --force --no-interaction chdir={{web_path}}/{{app_name}}
+
+    - name: create database
+      action: command /usr/bin/php app/console doctrine:database:create --no-interaction chdir={{web_path}}/{{app_name}}
+
+    - name: create schema
+      action: command /usr/bin/php app/console doctrine:schema:create --no-interaction chdir={{web_path}}/{{app_name}}
+
+    - name: load fixtures
+      action: command /usr/bin/php app/console doctrine:fixtures:load --no-interaction chdir={{web_path}}/{{app_name}}
+
+    - name: replace AppKernel.php
+      template: src=templates/symfony/AppKernel.php dest={{web_path}}/{{app_name}}/app/AppKernel.php mode=0644 owner=root group=root
+
+    - name: create default site
+      action: command /usr/bin/php app/console kuma:generate:default-site --demosite --namespace=Sandbox/WebsiteBundle --prefix=demosite_ chdir={{web_path}}/{{app_name}}
+
+    - name: force update database
+      action: command /usr/bin/php app/console doctrine:schema:update --force --no-interaction chdir={{web_path}}/{{app_name}}
+
+    - name: load fixtures
+      action: command /usr/bin/php app/console doctrine:fixtures:load --fixtures=src/Sandbox/WebsiteBundle/DataFixtures/ORM/DefaultSiteGenerator/ --append --no-interaction chdir={{web_path}}/{{app_name}}
+
+    - name: bower install
+      action: command npm install -g bower
+
+    - name: grunt install
+      action: command npm install -g grunt
+
+    - name: sass install
+      action: command gem install sass
+
+    - name: install node packages
+      action: command npm install chdir={{web_path}}/{{app_name}}
+
+    - name: install bower packages
+      action: command bower install --allow-root chdir={{web_path}}/{{app_name}}
+
+    - name: build assets
+      action: command {{web_path}}/{{app_name}}/./node_modules/grunt-cli/bin/grunt build chdir={{web_path}}/{{app_name}}
+
+    - name: install symfony assets
+      action: command /usr/bin/php app/console assets:install web chdir={{web_path}}/{{app_name}}
+
+    - name: dump symfony assets
+      action: command /usr/bin/php app/console assetic:dump chdir={{web_path}}/{{app_name}}
+
+    - name: install nginx fastcgi_param
+      action: template src=templates/nginx/fastcgi_param dest=/etc/nginx/fastcgi_param
+      notify:
+        - restart nginx
+        - restart php-fpm
+
+    - name: create nginx site config
+      action: template src=templates/nginx/site.conf dest=/etc/nginx/sites-available/${app_name}.conf
+      notify:
+        - restart nginx
+        - restart php-fpm
+
+    - name: link nginx config
+      action: file src=/etc/nginx/sites-available/${app_name}.conf dest=/etc/nginx/sites-enabled/${app_name}.conf state=link
+      notify:
+        - restart nginx
+        - restart php-fpm
+
+    - name: remove log dir
+      action: command rm -rf {{web_path}}/{{app_name}}/app/logs
+
+    - name remove cache dir
+      action: command rm -rf {{web_path}}/{{app_name}}/app/cache
+
+    - name: ensure log directory
+      action: file dest={{web_path}}/{{app_name}}/app/logs state=directory mode=0755 owner=www-data group=www-data
+
+    - name: ensure cache directory
+      action: file dest={{web_path}/{{app_name}}/app/cache state=directory mode=0755 owner=www-data group=www-data
+
+  handlers:
+    - name: restart nginx
+      action: service name=nginx state=restarted
+
+    - name: restart php-fpm
+      action: service name=php5-fpm state=restarted

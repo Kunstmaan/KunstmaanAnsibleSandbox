@@ -1,0 +1,3 @@
+Package: *
+Pin: origin mariadb.mirror.nucleus.be
+Pin-Priority: 1000

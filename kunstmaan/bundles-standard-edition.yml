@@ -1,0 +1,169 @@
+---
+
+- hosts: webserver
+  user: vagrant
+  sudo: True
+
+  vars:
+    app_webserver_ip: 192.168.100.10
+
+  vars_files:
+    - variables.yml
+
+  tasks:
+
+    # due to an incredible fun bug of version naming
+    - name: Pin MariaDB apt repo priority
+      action: template src=templates/mysql/mariadb dest=/etc/apt/preferences.d/mariadb
+
+    - name: Update apt
+      action: command /usr/bin/apt-get update
+
+    - name: Install python-software-properties
+      action: apt pkg=python-software-properties state=present
+
+    - name: Add nginx ppa
+      action: apt_repository repo=ppa:nginx/stable state=present
+
+    - name: Install htop
+      action: apt pkg=htop state=installed
+
+    - name: Add nodejs apt repository
+      apt_repository: repo='deb http://ppa.launchpad.net/chris-lea/node.js/ubuntu saucy main'
+
+    - name: Install web server packages
+      action: apt pkg={{ item }} state=installed
+      with_items:
+        - build-essential
+        - libpq-dev
+        - libxml2-dev
+        - libjpeg62
+        - libjpeg62-dev
+        - libfreetype6
+        - libfreetype6-dev
+        - zlib1g-dev
+        - mysql-client
+        - imagemagick
+        - git
+        - nodejs
+        - nginx
+        - curl
+        - memcached
+        - yui-compressor
+
+    - name: Install php packages
+      action: apt pkg={{ item }} state=installed
+      with_items:
+        - php-pear
+        - php-apc
+        - php5-fpm
+        - php5-cli
+        - php5-dev
+        - php5-gd
+        - php5-curl
+        - php5-mcrypt
+        - php5-xdebug
+        - php5-sqlite
+        - php5-mysql
+        - php5-memcache
+        - php5-intl
+        - php5-tidy
+        - php5-imap
+        - php5-imagick
+        - php5-json
+
+    - name: Install mongo.so
+      action: command pecl install --force mongo
+
+    - name: Download composer
+      action: command /usr/bin/curl -s http://getcomposer.org/installer -o /tmp/composer_installer
+
+    - name: Install composer
+      action: command /usr/bin/php /tmp/composer_installer --install-dir=/usr/bin
+
+    - name: Move composer.phar to composer
+      action: command mv /usr/bin/composer.phar /usr/bin/composer
+
+    - name: Remove default nginx site
+      action: file path=/etc/nginx/sites-enabled/default state=absent
+
+    - name: Write nginx.conf
+      action: template src=templates/nginx/nginx.conf dest=/etc/nginx/nginx.conf
+
+    - name: Write cli php.ini
+      action: template src=templates/php/cli/php.ini dest=/etc/php5/cli/php.ini
+
+    - name: Write php/fpm/php.ini
+      action: template src=templates/php/fpm/php.ini dest=/etc/php5/fpm/php.ini
+
+    - name: Write php/fpm/fpm-php.ini
+      action: template src=templates/php/fpm/php-fpm.conf dest=/etc/php5/fpm/php-fpm.conf
+
+    - name: Write php/fpm/pool.d/www.conf
+      action: template src=templates/php/fpm/pool.d/www.conf dest=/etc/php5/fpm/pool.d/www.conf
+
+    - name: Create webapps directory
+      action: file dest={{ web_path }} state=directory
+
+    - name: Update apt
+      action: command /usr/bin/apt-get update
+
+    - name: Update sudoers
+      action: copy src=templates/sudoers dest=/etc/sudoers
+
+    - name: Add HHVM repo key
+      apt_key: url=http://dl.hhvm.com/conf/hhvm.gpg.key
+
+    - name: Add HHVM apt repository
+      apt_repository: repo='deb http://dl.hhvm.com/ubuntu saucy main'
+
+    - name: Update apt
+      action: command /usr/bin/apt-get update
+
+    - name: Install HHVM
+      action: apt pkg=hhvm state=installed
+
+    - name: Install db server packages
+      action: apt pkg={{ item }} state=present
+      with_items:
+        - software-properties-common
+        - python-dev
+        - python-setuptools
+        - python-mysqldb
+
+    - name: Add MariaDB apt key
+      apt_key: url=http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0xcbcb082a1bb943db
+
+    - name: Add MariaDB apt repository
+      apt_repository: repo='deb http://mariadb.mirror.nucleus.be/repo/5.5/ubuntu saucy main'
+
+    - name: Install MariaDB
+      apt: pkg=mariadb-server
+
+    - name: Update mysql root password for all root accounts
+      mysql_user: name=root host={{ item }} password={{ mysql_root_password }}
+      with_items:
+        - $ansible_hostname
+        - 127.0.0.1
+        - ::1
+        - localhost
+      ignore_errors: yes
+
+
+    - name: Install python libraries
+      action: easy_install name=ConfigParser
+
+    - name: Update mysql db configuration
+      action: template src=templates/mysql/my.cnf dest=/etc/mysql/my.cnf owner=root mode=0600
+      notify:
+        - restart mysql
+
+  handlers:
+    - name: restart mysql
+      action: service name=mysql state=restarted
+
+    - name: restart nginx
+      action: service name=nginx state=restarted
+
+    - name: restart php-fpm
+      action: service name=php5-fpm state=restarted
