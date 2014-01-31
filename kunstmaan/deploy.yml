@@ -58,6 +58,9 @@
     - name: sass install
       action: command gem install sass
 
+    - name: symlink sass
+      action: command ln -sf /usr/local/bin/sass /usr/bin/sass
+
     - name: install node packages
       action: command npm install chdir={{web_path}}/{{app_name}}
 
