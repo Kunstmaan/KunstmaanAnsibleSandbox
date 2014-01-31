@@ -93,7 +93,7 @@
     - name: remove log dir
       action: command rm -rf {{web_path}}/{{app_name}}/app/logs
 
-    - name remove cache dir
+    - name: remove cache dir
       action: command rm -rf {{web_path}}/{{app_name}}/app/cache
 
     - name: ensure log directory
