@@ -32,7 +32,7 @@
       apt_repository: repo='deb http://ppa.launchpad.net/chris-lea/node.js/ubuntu saucy main'
 
     - name: Install web server packages
-      action: apt pkg={{ item }} state=installed
+      action: apt pkg={{ item }} state=installed force=yes
       with_items:
         - build-essential
         - libpq-dev
