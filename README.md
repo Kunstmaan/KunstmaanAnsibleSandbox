@@ -2,7 +2,7 @@ Kunstmaan Bundles Standard Edition (Vagrant + Ansible)
 =============================
 
 An Ansible playbook to provision a vagrant saucy 64bit image with our latest KunstmaanBundlesStandardEdition.
-Running on nginx + php5.5 (fpm) + mariadb + memcached, and you might smell a bit of hhvm...
+Running on nginx + php5.5 (fpm) + mariadb + memcached.
 
 To be continued..
 
