@@ -19,13 +19,14 @@
       template: src=templates/symfony/app_dev.php dest={{web_path}}/{{app_name}}/web/app_dev.php mode=0644 owner=www-data group=www-data
 
     - name: composer install
-      action: command /usr/bin/composer --prefer-source --no-interaction install chdir={{web_path}}/{{app_name}}
+      action: command /usr/bin/composer --no-interaction install chdir={{web_path}}/{{app_name}}
 
     - name: create demo bundle
       action: command /usr/bin/php app/console kuma:generate:bundle --namespace=Sandbox/WebsiteBundle --dir=src/ --no-interaction chdir={{web_path}}/{{app_name}} --bundle-name=SandboxWebsiteBundle creates={{web_path}}/{{app_name}}/src/Sandbox/WebsiteBundle
 
     - name: drop database
       action: command /usr/bin/php app/console doctrine:database:drop --force --no-interaction chdir={{web_path}}/{{app_name}}
+      ignore_errors: yes
 
     - name: create database
       action: command /usr/bin/php app/console doctrine:database:create --no-interaction chdir={{web_path}}/{{app_name}}
@@ -57,6 +58,9 @@
     - name: sass install
       action: command gem install sass
 
+    - name: symlink sass
+      action: command ln -sf /usr/local/bin/sass /usr/bin/sass
+
     - name: install node packages
       action: command npm install chdir={{web_path}}/{{app_name}}
 
@@ -79,13 +83,13 @@
         - restart php-fpm
 
     - name: create nginx site config
-      action: template src=templates/nginx/site.conf dest=/etc/nginx/sites-available/${app_name}.conf
+      action: template src=templates/nginx/site.conf dest=/etc/nginx/sites-available/{{app_name}}.conf
       notify:
         - restart nginx
         - restart php-fpm
 
     - name: link nginx config
-      action: file src=/etc/nginx/sites-available/${app_name}.conf dest=/etc/nginx/sites-enabled/${app_name}.conf state=link
+      action: file src=/etc/nginx/sites-available/{{app_name}}.conf dest=/etc/nginx/sites-enabled/{{app_name}}.conf state=link
       notify:
         - restart nginx
         - restart php-fpm
@@ -93,14 +97,12 @@
     - name: remove log dir
       action: command rm -rf {{web_path}}/{{app_name}}/app/logs
 
-    - name remove cache dir
+    - name: remove cache dir
       action: command rm -rf {{web_path}}/{{app_name}}/app/cache
 
-    - name: ensure log directory
-      action: file dest={{web_path}}/{{app_name}}/app/logs state=directory mode=0755 owner=www-data group=www-data
+    - name: ensure www-data
+      action: file dest={{web_path}}/{{app_name}} state=directory mode=0755 owner=www-data group=www-data recurse=yes
 
-    - name: ensure cache directory
-      action: file dest={{web_path}/{{app_name}}/app/cache state=directory mode=0755 owner=www-data group=www-data
 
   handlers:
     - name: restart nginx
