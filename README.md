@@ -23,7 +23,7 @@ sudo pip install ansible --quiet
 
 ### Clone this repository
 ```
-git https://github.com/jverdeyen/KunstmaanAnsibleSandbox.git awesomeness
+git clone https://github.com/jverdeyen/KunstmaanAnsibleSandbox.git awesomeness
 cd awesomeness
 ```
 ### Run vagrant, with provisioning
