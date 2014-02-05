@@ -83,13 +83,13 @@
         - restart php-fpm
 
     - name: create nginx site config
-      action: template src=templates/nginx/site.conf dest=/etc/nginx/sites-available/${app_name}.conf
+      action: template src=templates/nginx/site.conf dest=/etc/nginx/sites-available/{{app_name}}.conf
       notify:
         - restart nginx
         - restart php-fpm
 
     - name: link nginx config
-      action: file src=/etc/nginx/sites-available/${app_name}.conf dest=/etc/nginx/sites-enabled/${app_name}.conf state=link
+      action: file src=/etc/nginx/sites-available/{{app_name}}.conf dest=/etc/nginx/sites-enabled/{{app_name}}.conf state=link
       notify:
         - restart nginx
         - restart php-fpm
