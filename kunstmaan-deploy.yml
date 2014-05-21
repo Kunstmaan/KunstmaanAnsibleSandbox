@@ -22,7 +22,7 @@
       command: composer --no-interaction --prefer-source install chdir={{ app_path }}
 
     - name: Create demo bundle
-      command: /usr/bin/php app/console kuma:generate:bundle --namespace=Sandbox/WebsiteBundle --dir=src/ --no-interaction chdir={{ app_path }} --bundle-name=SandboxWebsiteBundle --structure creates={{ app_path }}/src/Sandbox/WebsiteBundle
+      command: /usr/bin/php app/console kuma:generate:bundle --namespace=Sandbox/WebsiteBundle --dir=src/ --no-interaction chdir={{ app_path }} --bundle-name=SandboxWebsiteBundle creates={{ app_path }}/src/Sandbox/WebsiteBundle
 
     - name: Drop database
       command: /usr/bin/php app/console doctrine:database:drop --force --no-interaction chdir={{ app_path }}
