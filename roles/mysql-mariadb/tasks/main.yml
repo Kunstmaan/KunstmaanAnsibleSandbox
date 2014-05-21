@@ -1,0 +1,50 @@
+
+- name: Update apt
+  command: /usr/bin/apt-get update
+
+- name: Install db server packages
+  apt: pkg={{ item }} state=present
+  with_items:
+    - software-properties-common
+    - python-dev
+    - python-setuptools
+    - python-mysqldb
+    - python-pycurl
+
+- name: Install MariaDB server/client
+  apt: pkg={{ item }}
+  with_items:
+    - mariadb-server
+    - mariadb-client
+
+- name: Update the my.cnf
+  action: template src=my.cnf dest=/etc/mysql/my.cnf owner=root group=root mode=0644
+  notify:
+    - restart mysql
+
+- name: Set the root password
+  action: mysql_user user=root password={{ mysql_root_password }} host=localhost
+
+- name: Configure MySql for easy access as root user
+  action: template src=root.cnf dest=/root/.my.cnf owner=root group=root mode=0644
+
+- name: Remove anonymous MySQL server user for the hostname
+  action: mysql_user user="" host="{{ hostname }}" state="absent"
+
+- name: Delete the anonymous MySQL server user for localhost
+  action: mysql_user user="" state="absent"
+
+- name: Secure the MySQL root user for IPV6 localhost (::1)
+  action: mysql_user user="root" password="{{ mysql_root_password }}" host="::1"
+
+- name: Secure the MySQL root user for IPV4 localhost (127.0.0.1)
+  action: mysql_user user="root" password="{{ mysql_root_password }}" host="127.0.0.1"
+
+- name: Secure the MySQL root user for localhost domain (localhost)
+  action: mysql_user user="root" password="{{ mysql_root_password }}" host="localhost"
+
+- name: Secure the MySQL root user for the hostname domain
+  action: mysql_user user="root" password="{{ mysql_root_password }}" host="{{ hostname }}"
+
+- name: Remove the MySQL test database
+  action: mysql_db db=test state=absent

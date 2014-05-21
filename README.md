@@ -1,18 +1,17 @@
-Kunstmaan Sandbox, using Vagrant and Ansible
+Ansible Kunstmaan Sandbox
 =============================
 
 Create a Kunstmaan Sandbox by simply using 4 commands:
 
 * Install [Ansible](http://docs.ansible.com)
 * Clone this repository
-* Run vagrant, with provisioning
-* Apply our Ansible Playbook
+* Vagrant up
 
 ## Getting started
 
 ### Prerequisites
-* Vagrant (>= 1.4.3)
-* VirtualBox (>= 4.3*)
+* [VirtualBox (>= 4.3*)](https://www.virtualbox.org)
+* [Vagrant (>= 1.4.3)](http://www.vagrantup.com)
 
 ### Install [Ansible](http://docs.ansible.com)
 
@@ -23,17 +22,12 @@ sudo pip install ansible --quiet
 
 ### Clone this repository
 ```
-git clone https://github.com/jverdeyen/KunstmaanAnsibleSandbox.git awesomeness
-cd awesomeness
+git clone https://github.com/Kunstmaan/KunstmaanAnsibleSandbox.git
+cd KunstmaanAnsibleSandbox
 ```
 ### Run vagrant, with provisioning
 ```
-vagrant up --provision
-```
-
-### Apply our Ansible Playbook
-```
-ansible-playbook kunstmaan/deploy.yml -i kunstmaan/hosts --private-key=$HOME/.vagrant.d/insecure_private_key
+vagrant up
 ```
 
 ### Click the following links
@@ -48,4 +42,4 @@ __Login__: username: admin, password: admin
 * Mac OS X 10.8.3
 * Vagrant 1.4.3
 * VirtualBox 4.3.6r91406
-* ansible 1.4.4
+* Ansible 1.4.4

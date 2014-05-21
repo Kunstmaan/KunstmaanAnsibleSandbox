@@ -1,0 +1,21 @@
+---
+- hosts: sandboxes
+  user: vagrant
+  sudo: True
+
+  vars_files:
+    - variables.yml
+
+  roles:
+    - common
+    - nginx
+    - mysql-mariadb
+    - php5-fpm
+    - composer
+    - nodejs
+    - ntp
+
+  tasks:
+    - gem: name=sass state=latest user_install=no
+    - gem: name=compass state=latest user_install=no
+    - apt: name=openjdk-7-jdk state=latest

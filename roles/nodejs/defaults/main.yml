@@ -1,0 +1,1 @@
+nodejs_packages: ['grunt', 'bower', 'uglify-js']

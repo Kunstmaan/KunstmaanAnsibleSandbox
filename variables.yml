@@ -1,0 +1,18 @@
+---
+# Application Specific variables
+mysql_root_password: 7Yq8eTpJLoe7337ngvZiVKvUiQootY
+hostname: node.sandbox
+app_name: kunstmaan-bundles-standard-edition
+app_database: kunstmaan
+app_database_user: root
+app_database_userpwd: "{{ mysql_root_password }}"
+web_path: /var/www
+app_path: "{{ web_path }}/{{ app_name }}"
+
+# Repository
+repo_url: https://github.com/Kunstmaan/KunstmaanBundlesStandardEdition.git
+repo_remote: origin
+repo_version: master
+
+# Symfony 2 secret key
+app_secret_key: ThisTokenIsNotSoSecretChangeIt

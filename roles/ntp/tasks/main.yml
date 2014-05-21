@@ -1,0 +1,14 @@
+---
+- name: Ensure the ntp package is installed
+  apt: pkg=ntp state=installed
+
+- name: Ensure the ntp.conf
+  copy: src=ntp.conf dest=/etc/ntp.conf mode=755
+  notify:
+    - restart ntp
+
+- name: Update timezone link foo
+  file: src=/usr/share/zoneinfo/Europe/Brussels dest=/etc/localtime mode=755 state=link force=yes
+
+- name: Update timezone link foo
+  copy: src=timezone dest=/etc/timezone mode=755
