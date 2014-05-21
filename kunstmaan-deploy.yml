@@ -1,0 +1,110 @@
+---
+
+- hosts: sandboxes
+  user: vagrant
+  sudo: True
+
+  vars_files:
+    - variables.yml
+
+
+  tasks:
+    - name: Clone KunstmaanBundlesStandardEdition
+      action: git repo={{repo_url}} dest={{ app_path }} remote={{repo_remote}} version={{repo_version}}
+
+    - name: Copy symfony config
+      template: src=templates/symfony/parameters.yml dest={{ app_path }}/app/config/parameters.yml mode=0644 owner=root group=root
+
+    - name: Copy app_dev.php
+      template: src=templates/symfony/app_dev.php dest={{ app_path }}/web/app_dev.php mode=0644 owner=www-data group=www-data
+
+    - name: Composer install packages, this will take some time.. grab a coffee (or 2)
+      command: composer --no-interaction --prefer-source install chdir={{ app_path }}
+
+    - name: Create demo bundle
+      command: /usr/bin/php app/console kuma:generate:bundle --namespace=Sandbox/WebsiteBundle --dir=src/ --no-interaction chdir={{ app_path }} --bundle-name=SandboxWebsiteBundle creates={{ app_path }}/src/Sandbox/WebsiteBundle
+
+    - name: Drop database
+      command: /usr/bin/php app/console doctrine:database:drop --force --no-interaction chdir={{ app_path }}
+      ignore_errors: yes
+
+    - name: Create database
+      command: /usr/bin/php app/console doctrine:database:create --no-interaction chdir={{ app_path }}
+
+    - name: Create schema
+      command: /usr/bin/php app/console doctrine:schema:create --no-interaction chdir={{ app_path }}
+
+    - name: Load fixtures
+      command: /usr/bin/php app/console doctrine:fixtures:load --no-interaction chdir={{ app_path }}
+
+    - name: Add SandboxBundle in AppKernel
+      lineinfile: dest={{ app_path }}/app/AppKernel.php insertbefore="return \$bundles;$" line='$bundles[] = new Sandbox\WebsiteBundle\SandboxWebsiteBundle();' state=present
+
+    - name: Create default site
+      command: /usr/bin/php app/console kuma:generate:default-site --demosite --namespace=Sandbox/WebsiteBundle --prefix=demosite_ chdir={{ app_path }}
+
+    - name: Force update database
+      command: /usr/bin/php app/console doctrine:schema:update --force --no-interaction chdir={{ app_path }}
+
+    - name: Load fixtures
+      command: /usr/bin/php app/console doctrine:fixtures:load --fixtures=src/Sandbox/WebsiteBundle/DataFixtures/ORM/DefaultSiteGenerator/ --append --no-interaction chdir={{ app_path }}
+
+    - name: Symlink sass
+      command: ln -sf /usr/local/bin/sass /usr/bin/sass
+
+    - name: Install node packages
+      command: npm install chdir={{ app_path }}
+
+    - name: Install bower packages
+      command: bower install --allow-root chdir={{ app_path }}
+
+    - name: Build assets
+      command: ./node_modules/.bin/grunt build chdir={{ app_path }}
+
+    - name: Install symfony assets
+      command: /usr/bin/php app/console assets:install web chdir={{ app_path }}
+
+    - name: Dump symfony assets
+      command: /usr/bin/php app/console assetic:dump chdir={{ app_path }}
+
+    - name: Install nginx fastcgi_param
+      action: template src=templates/nginx/fastcgi_param dest=/etc/nginx/fastcgi_param
+      notify:
+        - restart nginx
+
+    - name: Create nginx site config
+      action: template src=templates/nginx/site.conf dest=/etc/nginx/sites-available/{{app_name}}.conf
+      notify:
+        - restart nginx
+
+    - name: Remove default site
+      action: file path=/etc/nginx/sites-enabled/default.conf state=absent
+      notify:
+        - restart nginx
+
+    - name: Link nginx config
+      action: file src=/etc/nginx/sites-available/{{app_name}}.conf dest=/etc/nginx/sites-enabled/{{app_name}}.conf state=link
+      notify:
+        - restart nginx
+
+    - name: Create php-fpm pool
+      action: template src=templates/php/fpm/pool.d/www.conf dest=/etc/php5/fpm/pool.d/www.conf
+      notify:
+        - restart php-fpm
+
+    - name: Remove Symfony2 log dir
+      command: rm -rf {{ app_path }}/app/logs
+
+    - name: Remove Symfony2 cache dir
+      command: rm -rf {{ app_path }}/app/cache
+
+    - name: Ensure www-data is the owner of everything
+      action: file dest={{ app_path }} state=directory mode=0755 owner=www-data group=www-data recurse=yes
+
+
+  handlers:
+    - name: restart nginx
+      action: service name=nginx state=restarted
+
+    - name: restart php-fpm
+      action: service name=php5-fpm state=restarted

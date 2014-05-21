@@ -1,0 +1,2 @@
+[sandboxes]
+node.sandbox  ansible_ssh_host=192.0.0.112 ansible_hostname=node.sandbox
