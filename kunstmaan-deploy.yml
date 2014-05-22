@@ -19,7 +19,7 @@
       template: src=templates/symfony/app_dev.php dest={{ app_path }}/web/app_dev.php mode=0644 owner=www-data group=www-data
 
     - name: Composer install packages, this will take some time.. grab a coffee (or 2)
-      command: composer --no-interaction --prefer-source install chdir={{ app_path }}
+      command: composer --no-interaction install chdir={{ app_path }}
 
     - name: Create demo bundle
       command: /usr/bin/php app/console kuma:generate:bundle --namespace=Sandbox/WebsiteBundle --dir=src/ --no-interaction chdir={{ app_path }} --bundle-name=SandboxWebsiteBundle creates={{ app_path }}/src/Sandbox/WebsiteBundle
@@ -37,8 +37,8 @@
     - name: Load fixtures
       command: /usr/bin/php app/console doctrine:fixtures:load --no-interaction chdir={{ app_path }}
 
-    - name: Add SandboxBundle in AppKernel
-      command: sed -i '33i\new Sandbox\\WebsiteBundle\\SandboxWebsiteBundle(),' {{ app_path }}/app/AppKernel.php
+    # - name: Add SandboxBundle in AppKernel
+    #   command: sed -i '33i\new Sandbox\\WebsiteBundle\\SandboxWebsiteBundle(),' {{ app_path }}/app/AppKernel.php
 
     - name: Create default site
       command: /usr/bin/php app/console kuma:generate:default-site --demosite --namespace=Sandbox/WebsiteBundle --prefix=demosite_ chdir={{ app_path }}
