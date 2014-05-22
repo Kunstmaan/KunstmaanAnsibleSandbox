@@ -24,3 +24,4 @@
     - file: state=link src=/usr/bin/uglifyjs dest=/usr/local/bin/uglifyjs
     - file: state=link src=/usr/bin/uglifyjs dest=/usr/local/bin/uglifyjs
     - file: state=link src=/usr/bin/uglifycss dest=/usr/local/bin/uglifycss
+    - file: state=link src=/usr/bin/node dest=/usr/local/bin/node
