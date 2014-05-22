@@ -20,4 +20,7 @@
     - gem: name=compass state=latest user_install=no
     - apt: name=openjdk-7-jdk state=latest
     - command: npm install -g uglify-js
+    - command: npm install -g uglifycss
     - file: state=link src=/usr/bin/uglifyjs dest=/usr/local/bin/uglifyjs
+    - file: state=link src=/usr/bin/uglifyjs dest=/usr/local/bin/uglifyjs
+    - file: state=link src=/usr/bin/uglifycss dest=/usr/local/bin/uglifycss
