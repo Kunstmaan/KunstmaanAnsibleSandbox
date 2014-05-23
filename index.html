@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="KunstmaanAnsibleSandbox : A Vagrant VM with our Kunstmaan Bundles demo site." />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>KunstmaanAnsibleSandbox</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/Kunstmaan/KunstmaanAnsibleSandbox">View on GitHub</a>
+
+          <h1 id="project_title">KunstmaanAnsibleSandbox</h1>
+          <h2 id="project_tagline">A Vagrant VM with our Kunstmaan Bundles demo site.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/Kunstmaan/KunstmaanAnsibleSandbox/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/Kunstmaan/KunstmaanAnsibleSandbox/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="ansible-kunstmaan-sandbox" class="anchor" href="#ansible-kunstmaan-sandbox"><span class="octicon octicon-link"></span></a>Ansible Kunstmaan Sandbox</h1>
+
+<p>Create a Kunstmaan Sandbox by simply using 4 commands:</p>
+
+<ul>
+<li>Install <a href="http://docs.ansible.com">Ansible</a>
+</li>
+<li>Clone this repository</li>
+<li>Vagrant up</li>
+</ul><h2>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting started</h2>
+
+<h3>
+<a name="prerequisites" class="anchor" href="#prerequisites"><span class="octicon octicon-link"></span></a>Prerequisites</h3>
+
+<ul>
+<li><a href="https://www.virtualbox.org">VirtualBox (&gt;= 4.3*)</a></li>
+<li><a href="http://www.vagrantup.com">Vagrant (&gt;= 1.4.3)</a></li>
+</ul><h3>
+<a name="install-ansible" class="anchor" href="#install-ansible"><span class="octicon octicon-link"></span></a>Install <a href="http://docs.ansible.com">Ansible</a>
+</h3>
+
+<pre><code>sudo easy_install pip
+sudo pip install ansible --quiet
+</code></pre>
+
+<h3>
+<a name="clone-this-repository" class="anchor" href="#clone-this-repository"><span class="octicon octicon-link"></span></a>Clone this repository</h3>
+
+<pre><code>git clone https://github.com/Kunstmaan/KunstmaanAnsibleSandbox.git
+cd KunstmaanAnsibleSandbox
+</code></pre>
+
+<h3>
+<a name="run-vagrant-with-provisioning" class="anchor" href="#run-vagrant-with-provisioning"><span class="octicon octicon-link"></span></a>Run vagrant, with provisioning</h3>
+
+<pre><code>vagrant up
+</code></pre>
+
+<h3>
+<a name="click-the-following-links" class="anchor" href="#click-the-following-links"><span class="octicon octicon-link"></span></a>Click the following links</h3>
+
+<ul>
+<li><a href="http://localhost:8888/app_dev.php">http://localhost:8888/</a></li>
+<li><a href="http://localhost:8888/admin/app_dev.php">http://localhost:8888/admin</a></li>
+</ul><p><strong>Login</strong>: username: admin, password: admin</p>
+
+<h3>
+<a name="our-setup" class="anchor" href="#our-setup"><span class="octicon octicon-link"></span></a>Our setup</h3>
+
+<ul>
+<li>Mac OS X 10.8.3</li>
+<li>Vagrant 1.4.3</li>
+<li>VirtualBox 4.3.6r91406</li>
+<li>Ansible 1.4.4</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">KunstmaanAnsibleSandbox maintained by <a href="https://github.com/Kunstmaan">Kunstmaan</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
