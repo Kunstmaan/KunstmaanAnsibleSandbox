@@ -36,3 +36,11 @@
   template: src=php-fpm.conf dest=/etc/php5/fpm/php-fpm.conf
   notify:
     - restart php-fpm
+
+# https://bugs.php.net/bug.php?id=67060
+- name: Fix FPM security issue
+  action: lineinfile dest='/etc/php5/fpm/pool.d/www.conf' state=present regexp="^;listen.owner = www-data" line="listen.owner = www-data"
+- action: lineinfile dest='/etc/php5/fpm/pool.d/www.conf' state=present regexp="^;listen.group = www-data" line="listen.group = www-data"
+- action: lineinfile dest='/etc/php5/fpm/pool.d/www.conf' state=present regexp="^;listen.mode = 0666" line="listen.mode = 0666"
+  notify:
+    - restart php-fpm
