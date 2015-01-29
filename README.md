@@ -56,7 +56,7 @@ Ansible Kunstmaan Sandbox
 
 Note: You can't run this from host YET.
 
-### Stop Nginx server which would be running at 127.0.0.1/8888 from host
+### Stop Nginx server which would be running at 127.0.0.1/80
 * /usr/bin/nginx -s stop
 
 ### modify config.php to be allowed to be accessed from host machine
