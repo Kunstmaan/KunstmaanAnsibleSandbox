@@ -19,7 +19,7 @@ Ansible Kunstmaan Sandbox
 * install vagrant plugin (https://plugins.jetbrains.com/plugin/7379?pr=idea)
 * In PhpStorm - Tools->Vagrant->up or from command line 'vagrant up' from KunstmaanAnsibleSandbox
 
-### Composer will fail - with lack of memory to fix that
+### Composer will fail - with lack of memory
 * vagrant ssh
 * php -d memory_limit=-1 /usr/local/bin/composer update
 
@@ -51,8 +51,8 @@ Ansible Kunstmaan Sandbox
 ### check if everything is alright till now:
 * php app/check.php
 
-### This part is confusing for those who is installing for the first time:
-http://localhost/path/to/app/web/config.php
+### This part is confusing for those who are installing this for the first time:
+* http://localhost/path/to/app/web/config.php
 
 Note: You can't run this from host YET.
 
@@ -60,9 +60,9 @@ Note: You can't run this from host YET.
 * /usr/bin/nginx -s stop
 
 ### modify config.php to be allowed to be accessed from host machine
-vim /var/www/kunstmaan-bundles-standard-edition/web/config.php
+* vim /var/www/kunstmaan-bundles-standard-edition/web/config.php
 
-a snippet of config.php
+### a snippet of config.php
 if (!in_array(@$_SERVER['REMOTE_ADDR'], array(
     '127.0.0.1',
     '::1',
@@ -73,44 +73,44 @@ if (!in_array(@$_SERVER['REMOTE_ADDR'], array(
 }
 
 ### Continue executing the statements:
-app/console kuma:generate:bundle
-app/console kuma:generate:default-site --demosite
-app/console doctrine:database:create
-app/console doctrine:schema:create
-app/console doctrine:fixtures:load
-app/console kuma:generate:admin-tests
+* app/console kuma:generate:bundle
+* app/console kuma:generate:default-site --demosite
+* app/console doctrine:database:create
+* app/console doctrine:schema:create
+* app/console doctrine:fixtures:load
+* app/console kuma:generate:admin-tests
 
-bower install
-npm install
-sudo grunt build
-app/console assets:install web
-app/console assetic:dump
+* bower install
+* npm install
+* sudo grunt build
+* app/console assets:install web
+* app/console assetic:dump
 
 ### If at any point in these steps you get a DB error, then it can be fixed like this:
-sudo /etc/init.d/mysql stop
-sudo /usr/sbin/mysqld --skip-grant-tables --skip-networking &
-sudo /etc/init.d/mysql start
+* sudo /etc/init.d/mysql stop
+* sudo /usr/sbin/mysqld --skip-grant-tables --skip-networking &
+* sudo /etc/init.d/mysql start
 
-select host,user,password from mysql.user;
-update mysql.user set password = PASSWORD('root') where user='root' and host=‘localhost’;
+* select host,user,password from mysql.user;
+* update mysql.user set password = PASSWORD('root') where user='root' and host=‘localhost’;
 
-MariaDB [(none)]> FLUSH PRIVILEGES;
+* MariaDB [(none)]> FLUSH PRIVILEGES;
 
-MariaDB [(none)]> exit
+* MariaDB [(none)]> exit
 
 ### the way to run this instance is:
-on the vm run this:
-sudo php -S 0.0.0.0:80
+### on the vm run this:
+* sudo php -S 0.0.0.0:80
 
-on the host browser
-http://127.0.0.1:8888/web/config.php
+### on the host browser
+* http://127.0.0.1:8888/web/config.php
 
 ###complete the steps by clicking on
-http://127.0.0.1:8888/web/app_dev.php/_configurator/
+* http://127.0.0.1:8888/web/app_dev.php/_configurator/
 
 if step1 and step2 are followed successfully you should get a yml like this:
 
-http://127.0.0.1:8888/web/app_dev.php/_configurator/final
+* http://127.0.0.1:8888/web/app_dev.php/_configurator/final
 
 { parameters: { database_driver: pdo_mysql, database_host: localhost, database_port: null,
 database_name: kunstmaan, database_user: root, database_password: root, mailer_transport: smtp,
@@ -126,12 +126,12 @@ google.api.client_secret: null, google.api.dev_key: null, doctrine.server_versio
 
 
 ##### Finally, how to run the admin,
-Documentation says this: http://localhost/path/to/app/en/admin
-/path/to/app -> /web/app_dev.php/
+* Documentation says this: http://localhost/path/to/app/en/admin
+* /path/to/app -> /web/app_dev.php/
 
-http://127.0.0.1:8888/web/app_dev.php/en/admin/login
+* http://127.0.0.1:8888/web/app_dev.php/en/admin/login
 
-use admin/admin
+* use admin/admin
 
 
 
